@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SignatureService {
@@ -40,7 +41,7 @@ public class SignatureService {
         }
     }
 
-    public Optional<Signature> findById(Long id) {
+    public Optional<Signature> findById(UUID id) {
         return signatureRepository.findById(id);
     }
 

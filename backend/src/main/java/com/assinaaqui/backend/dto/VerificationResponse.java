@@ -1,10 +1,11 @@
 package com.assinaaqui.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class VerificationResponse {
 
-    private Long signatureId;
+    private UUID signatureId;
     private boolean isValid;
     private String status; // "VÁLIDA" ou "INVÁLIDA"
     private String signatory;
@@ -16,7 +17,7 @@ public class VerificationResponse {
     // Constructors
     public VerificationResponse() {}
 
-    public VerificationResponse(Long signatureId, boolean isValid, String signatory, 
+    public VerificationResponse(UUID signatureId, boolean isValid, String signatory, 
                               String algorithm, LocalDateTime signedAt, String originalText, 
                               long verificationCount) {
         this.signatureId = signatureId;
@@ -30,11 +31,11 @@ public class VerificationResponse {
     }
 
     // Getters and Setters
-    public Long getSignatureId() {
+    public UUID getSignatureId() {
         return signatureId;
     }
 
-    public void setSignatureId(Long signatureId) {
+    public void setSignatureId(UUID signatureId) {
         this.signatureId = signatureId;
     }
 

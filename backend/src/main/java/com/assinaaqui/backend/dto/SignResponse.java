@@ -1,10 +1,11 @@
 package com.assinaaqui.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class SignResponse {
 
-    private Long signatureId;
+    private UUID signatureId;
     private String hash;
     private String signature;
     private String algorithm;
@@ -13,7 +14,7 @@ public class SignResponse {
     // Constructors
     public SignResponse() {}
 
-    public SignResponse(Long signatureId, String hash, String signature, String algorithm, LocalDateTime createdAt) {
+    public SignResponse(UUID signatureId, String hash, String signature, String algorithm, LocalDateTime createdAt) {
         this.signatureId = signatureId;
         this.hash = hash;
         this.signature = signature;
@@ -22,11 +23,11 @@ public class SignResponse {
     }
 
     // Getters and Setters
-    public Long getSignatureId() {
+    public UUID getSignatureId() {
         return signatureId;
     }
 
-    public void setSignatureId(Long signatureId) {
+    public void setSignatureId(UUID signatureId) {
         this.signatureId = signatureId;
     }
 

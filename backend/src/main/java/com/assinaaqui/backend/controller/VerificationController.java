@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/verify")
@@ -27,7 +28,7 @@ public class VerificationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> verifySignature(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             HttpServletRequest request) {
         try {
             // Buscar assinatura por ID
@@ -89,7 +90,7 @@ public class VerificationController {
             
             // Buscar assinatura no banco de dados pelo valor da assinatura
             // Nota: Este é um método simplificado. Em produção, seria melhor ter um índice ou método mais eficiente
-            Optional<Signature> signatureOptional = signatureService.findById(Long.parseLong(request.get("id")));
+            Optional<Signature> signatureOptional = signatureService.findById(UUID.fromString(request.get("id")));
             
             if (signatureOptional.isEmpty()) {
                 Map<String, String> error = new HashMap<>();

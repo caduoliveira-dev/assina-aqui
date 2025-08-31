@@ -13,7 +13,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function CopyIdSigner() {
+interface CopyIdSignerProps {
+  signatureId: number
+}
+
+export default function CopyIdSigner({ signatureId }: CopyIdSignerProps) {
   const id = useId()
   const [copied, setCopied] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,14 +32,14 @@ export default function CopyIdSigner() {
 
   return (
     <div className="*:not-first:mt-2">
-      <Label htmlFor={id}>Copy to clipboard</Label>
+      <Label htmlFor={id}>Signature ID - Copy to verify</Label>
       <div className="relative">
         <Input
           ref={inputRef}
           id={id}
           className="pe-9"
           type="text"
-          defaultValue="id singnature"
+          value={signatureId.toString()}
           readOnly
         />
         <TooltipProvider delayDuration={0}>

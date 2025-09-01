@@ -20,7 +20,8 @@ export default function SignerForm(){
   const [isSigned, setIsSigned] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [signatureId, setSignatureId] = useState<number | null>(null)
+  const [signatureId, setSignatureId] = useState<string | null>(null)
+  const [signature, setSignature] = useState<string | null>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,6 +48,7 @@ export default function SignerForm(){
       if (response.ok) {
         const data = await response.json()
         setSignatureId(data.signatureId)
+        setSignature(data.signature)
         setIsSigned(true)
       } else if (response.status === 401) {
         // Token inválido, redirecionar para login
@@ -81,7 +83,7 @@ export default function SignerForm(){
               </div>
             )}
             <div className="grid gap-3">
-              <Textarea 
+              <Textarea
                 placeholder="Type here"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -89,15 +91,15 @@ export default function SignerForm(){
               />
             </div>
             <div className="flex flex-col gap-3">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full cursor-pointer"
                 disabled={isLoading || isSigned}
               >
                 {isLoading ? "Signing..." : isSigned ? "Signed" : "Sign"}
               </Button>
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="outline"
                 className="w-full cursor-pointer"
                 onClick={() => router.push("/verify")}
@@ -112,7 +114,10 @@ export default function SignerForm(){
       <CardFooter>
         <div className="w-full">
           <Separator className="mb-4" />
-          <CopyIdSigner signatureId={signatureId} />
+          <CopyIdSigner
+            signatureId={signatureId}
+            signature={signature || undefined}
+          />
         </div>
       </CardFooter>
       )}

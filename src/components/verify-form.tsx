@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Card,
   CardContent,
@@ -18,7 +19,7 @@ import { Badge } from "./ui/badge"
 import { AlertCircleIcon, BadgeCheckIcon, CheckIcon } from "lucide-react"
 
 interface VerificationResult {
-  signatureId: number
+  signatureId: string
   status: string
   signatory: string
   algorithm: string
@@ -29,10 +30,14 @@ interface VerificationResult {
 }
 
 export function VerifyForm(){
+  const [verificationMode, setVerificationMode] = useState<"id" | "text">("id")
   const [signatureId, setSignatureId] = useState("")
+  const [text, setText] = useState("")
+  const [signature, setSignature] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null)
+  const router = useRouter()
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -41,12 +46,27 @@ export function VerifyForm(){
     setVerificationResult(null)
 
     try {
-      const response = await fetch(`http://localhost:8080/api/verify/${signatureId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      let response;
+      
+      if (verificationMode === "id") {
+        response = await fetch(`http://localhost:8080/api/verify/${signatureId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+      } else {
+        response = await fetch("http://localhost:8080/api/verify/text", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text,
+            signature,
+          }),
+        })
+      }
 
       if (response.ok) {
         const data = await response.json()
@@ -72,17 +92,66 @@ export function VerifyForm(){
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
+              {/* Mode Switch */}
               <div className="grid gap-3">
-                <Label htmlFor="signatureId">Signature ID</Label>
-                <Input
-                  id="signatureId"
-                  type="text"
-                  placeholder="Enter signature ID"
-                  value={signatureId}
-                  onChange={(e) => setSignatureId(e.target.value)}
-                  required
-                />
+                <Label>Verification Mode</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={verificationMode === "id" ? "default" : "outline"}
+                    onClick={() => setVerificationMode("id")}
+                    className="flex-1"
+                  >
+                    By ID
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={verificationMode === "text" ? "default" : "outline"}
+                    onClick={() => setVerificationMode("text")}
+                    className="flex-1"
+                  >
+                    By Text + Signature
+                  </Button>
+                </div>
               </div>
+
+              {/* Form Fields Based on Mode */}
+              {verificationMode === "id" ? (
+                <div className="grid gap-3">
+                  <Label htmlFor="signatureId">Signature ID</Label>
+                  <Input
+                    id="signatureId"
+                    type="text"
+                    placeholder="Enter signature ID"
+                    value={signatureId}
+                    onChange={(e) => setSignatureId(e.target.value)}
+                    required
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="grid gap-3">
+                    <Label htmlFor="text">Original Text</Label>
+                    <Textarea
+                      id="text"
+                      placeholder="Enter the original text"
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-3">
+                    <Label htmlFor="signature">Signature</Label>
+                    <Textarea
+                      id="signature"
+                      placeholder="Enter the signature"
+                      value={signature}
+                      onChange={(e) => setSignature(e.target.value)}
+                      required
+                    />
+                  </div>
+                </>
+              )}
               
               {error && (
                 <div className="text-red-500 text-sm">
@@ -91,8 +160,24 @@ export function VerifyForm(){
               )}
               
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full cursor-pointer" disabled={isLoading || !signatureId}>
+                <Button 
+                  type="submit" 
+                  className="w-full cursor-pointer" 
+                  disabled={
+                    isLoading || 
+                    (verificationMode === "id" && !signatureId) ||
+                    (verificationMode === "text" && (!text || !signature))
+                  }
+                >
                   {isLoading ? "Verifying..." : "Verify Signature"}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  onClick={() => router.push("/signer")}
+                >
+                  Sign New Text
                 </Button>
               </div>
             </div>

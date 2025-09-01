@@ -73,4 +73,12 @@ public class SignatureService {
             return false;
         }
     }
+    
+    public String calculateTextHash(String text) {
+        return cryptographyService.calculateSHA256Hash(text);
+    }
+    
+    public Optional<Signature> findByHashAndSignature(String hash, String signatureValue) {
+        return signatureRepository.findByTextHashAndSignature(hash, signatureValue);
+    }
 }

@@ -87,25 +87,17 @@ public class VerificationController {
                 error.put("error", "Texto e assinatura são obrigatórios");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
             }
-            
-            // Buscar assinatura no banco de dados pelo valor da assinatura
-            // Nota: Este é um método simplificado. Em produção, seria melhor ter um índice ou método mais eficiente
-            Optional<Signature> signatureOptional = signatureService.findById(UUID.fromString(request.get("id")));
+
+            String calculatedHash = signatureService.calculateTextHash(originalText);
+            Optional<Signature> signatureOptional = signatureService.findByHashAndSignature(calculatedHash, signatureValue);
             
             if (signatureOptional.isEmpty()) {
                 Map<String, String> error = new HashMap<>();
-                error.put("error", "Assinatura não encontrada");
+                error.put("error", "Assinatura não encontrada no sistema");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             
             Signature signature = signatureOptional.get();
-            
-            // Verificar se o texto original corresponde
-            if (!signature.getOriginalText().equals(originalText)) {
-                Map<String, String> error = new HashMap<>();
-                error.put("error", "Texto não corresponde à assinatura");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-            }
             
             // Verificar a validade da assinatura
             boolean isValid = signatureService.verifySignatureByText(

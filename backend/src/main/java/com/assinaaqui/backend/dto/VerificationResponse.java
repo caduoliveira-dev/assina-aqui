@@ -22,7 +22,7 @@ public class VerificationResponse {
                               long verificationCount) {
         this.signatureId = signatureId;
         this.isValid = isValid;
-        this.status = isValid ? "VÁLIDA" : "INVÁLIDA";
+        this.status = isValid ? "VALID" : "INVALID";
         this.signatory = signatory;
         this.algorithm = algorithm;
         this.signedAt = signedAt;
@@ -45,7 +45,7 @@ public class VerificationResponse {
 
     public void setValid(boolean valid) {
         isValid = valid;
-        this.status = valid ? "VÁLIDA" : "INVÁLIDA";
+        this.status = valid ? "VALID" : "INVALID";
     }
 
     public String getStatus() {

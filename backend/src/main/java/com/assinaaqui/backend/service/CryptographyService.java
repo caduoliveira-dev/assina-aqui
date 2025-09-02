@@ -109,6 +109,9 @@ public class CryptographyService {
 
             byte[] signatureBytes = Base64.getDecoder().decode(signatureBase64);
             return signature.verify(signatureBytes);
+        } catch (IllegalArgumentException e) {
+            // Invalid Base64 signature
+            return false;
         } catch (Exception e) {
             throw new RuntimeException("Erro ao verificar assinatura: " + e.getMessage(), e);
         }

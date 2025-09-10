@@ -1,0 +1,39 @@
+services:
+  frontend:
+    image: assina-aqui-frontend:latest
+    ports:
+      - "80:80"
+    networks:
+      - assina-aqui-network
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  backend:
+    image: assina-aqui-backend:latest
+    expose:
+      - "8080"
+    networks:
+      - assina-aqui-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+networks:
+  assina-aqui-network:
+    driver: overlay
+    attachable: true
